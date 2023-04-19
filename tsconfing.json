@@ -1,0 +1,19 @@
+{ 
+"compilerOptions":
+  {
+  "target": "es6",
+  "module": "commonjs",
+  "allowJs": true,
+  "outDir": "./build",
+  "rootDir": "./src",
+  "esModuleInterop": true
+  },
+  "scripts": 
+  {
+    "dev": "nodemon src/app.ts",
+    	"start": "tsc && node src/index.ts"
+    },
+    "include": [
+        "src"
+      ]
+}
