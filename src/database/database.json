@@ -1,0 +1,25 @@
+[
+    {
+        "Id": 1,
+        "Nome": "João",
+        "Email": "joao@example.com",
+        "Carrinho": [
+            {
+                "id_verdura": 1,
+                "quantidade_verdura": 2,
+                "valor_verdura": 2.5
+            },
+            {
+                "id_verdura": 3,
+                "quantidade_verdura": 5,
+                "valor_verdura": 1.75
+            }
+        ],
+        "DadosPagamento": {
+            "TipoCartao": "Visa",
+            "NumeroCartao": "**** **** **** 1234",
+            "DataExpiracao": "12/25",
+            "CVV": "123"
+        }
+    }
+]

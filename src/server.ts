@@ -1,9 +1,28 @@
-import express from 'express';
-import {router} from './routes';
+import express, { Router } from 'express';
+import { VegetablesRoute } from './routes/vegetables/vegetables-routes';
+import cors from 'cors';
+const router = Router();
 
-const server = express();
+class Server {
+     public server: express.Application;
+     private vegetables_route: VegetablesRoute = new VegetablesRoute();
 
-server.use(express.json());
-server.use(router);
+     public static bootstrap(): Server {
+        return new Server();
+      }
 
-export { server };
+     constructor() {
+          this.server = express();
+          this.config();
+          this.vegetables_route.routes(this.server);
+      }
+
+      public config(): void{
+          this.server.use(express.json());
+          this.server.use(cors());
+          this.server.use(router);
+      }
+}
+
+export default new Server().server; 
+export { router };
