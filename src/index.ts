@@ -15,17 +15,17 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/teste', (req, res, next) => {
+router.post('/', (req, res, next) => {
     console.log(req.body);
     res.status( StatusCodes.CREATED).json(req.body)
 });
 
-router.put('/teste:id',(req, res, next)=>{
+router.put('/',(req, res, next)=>{
     console.log(req.body);
     res.status(StatusCodes.OK).json(req.body)
 })
 
-router.delete('/teste:id', (req, res, next)=>{
+router.delete('/', (req, res, next)=>{
     console.log(req.body);
     res.status(StatusCodes.OK).json(req.body)
 })

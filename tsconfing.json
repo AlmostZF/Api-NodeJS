@@ -1,19 +1,23 @@
-{ 
-"compilerOptions":
-  {
-  "target": "es6",
-  "module": "commonjs",
-  "allowJs": true,
-  "outDir": "./build",
-  "rootDir": "./src",
-  "esModuleInterop": true
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "allowJs": true,
+    "outDir": "./build",
+    "rootDir": "./src",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "lib": [
+      "es2015"
+    ]
   },
-  "scripts": 
-  {
+  "scripts": {
     "dev": "nodemon src/app.ts",
-    	"start": "tsc && node src/index.ts"
-    },
-    "include": [
-        "src"
-      ]
+    "start": "tsc && node src/index.ts"
+  },
+  "include": [
+    "src"
+  ]
 }

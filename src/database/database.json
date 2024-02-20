@@ -1,6 +1,6 @@
 [
     {
-        "Id": 1,
+        "UserId": 1,
         "Nome": "João",
         "Email": "joao@example.com",
         "Carrinho": [

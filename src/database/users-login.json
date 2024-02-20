@@ -2,13 +2,13 @@
   {
     "Id": 1,
     "Email": "joão@example.com",
-    "Senha": "senha123",
+    "password": "senha123",
     "Tipo": "Cliente"
   },
   {
     "Id": 2,
     "Email": "usuario2@example.com",
-    "Senha": "abc123",
+    "password": "abc123",
     "Tipo": "Admin"
   }
 ]
