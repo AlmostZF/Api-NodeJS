@@ -1,20 +1,20 @@
 [
     {
       "Id": 1,
-      "Quantidade": 10,
-      "ValorUnitario": 2.5,
-      "Tipo": "Folhas Verdes"
+      "quantity": 10,
+      "unitValue": 2.5,
+      "type": "Folhas Verdes"
     },
     {
       "Id": 2,
-      "Quantidade": 8,
-      "ValorUnitario": 3,
-      "Tipo": "Legumes"
+      "quantity": 8,
+      "unitValue": 3,
+      "type": "Legumes"
     },
     {
       "Id": 3,
-      "Quantidade": 15,
-      "ValorUnitario": 1.75,
-      "Tipo": "Raízes"
+      "quantity": 15,
+      "unitValue": 1.75,
+      "type": "Raízes"
     }
 ]

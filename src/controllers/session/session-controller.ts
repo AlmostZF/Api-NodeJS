@@ -18,15 +18,25 @@ export class SessionController{
     }
 
     post(req:Request, res:Response){
-        this.sessionService.post(req.params, req.body).then((result)=>{
-            res.status(200).json({
-                data: result
-            })
-        }).catch((error)=>{
-            res.status(500).json({
-                data: "error 500"
+        try{
+            this.sessionService.post(req.params, req.body).then((result)=>{
+                if (result.success) {
+                    res.status(200).json(result);
+                  } else {
+                    res.status(401).json(result);
+                  }
+            }).catch((error)=>{
+                res.status(500).json({
+                    data: "error 500"
+                });
             });
-        });
+        }catch(error){
+            console.error(error);
+            res.status(500).json({
+              success: false,
+              message: "Internal server error"
+            });
+        }
     }
     
     editUser(req: Request, res: Response){

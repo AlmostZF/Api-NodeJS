@@ -1,3 +1,4 @@
+import { Result } from "../../../models/result";
 import { User } from "../../../models/user-model";
 
 const userLogin = require('../../../database/users-login.json');
@@ -5,11 +6,13 @@ export default class SessionService{
     async get(){
         return  "get";
     }
-    async post(req:any, body:User){
-        try{
-            const user = userLogin.find((e:User)=> e.email === body.email)
+    async post(req:any, body:User): Promise<Result>{
+        const user = userLogin.find((e:User)=> e.email === body.email)
             if(!user){
-                return "login failed";
+                return {
+                    success: false,
+                    message: "login failed"
+                };
             }
             if(user.password === body.password){
                 return {
@@ -22,13 +25,8 @@ export default class SessionService{
                     message: "login failed"
                 };
             }
-        } catch(error: any){
-            return {
-                success: false,
-                message: error.message
-            };;
-        }
     }
+    
     async put(){
         return  "put";
     }
