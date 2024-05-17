@@ -1,5 +1,5 @@
 import { Application, Request, Response, } from "express";
-import { VegetablesController } from "../../controllers/vegetables/vegetables-controller";
+import { VegetablesController } from "../controllers/vegetables.controller";
 import cors from "cors";
 
 export class VegetablesRoute{
