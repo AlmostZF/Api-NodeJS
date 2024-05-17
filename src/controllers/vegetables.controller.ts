@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { error } from 'console';
-import VegetableService from '../../shared/service/vegetables/vegetables-service';
+import VegetableService from '../shared/service/vegetables.service';
 
 export class VegetablesController {
     // static vegetables = vegetables;
@@ -18,7 +17,6 @@ export class VegetablesController {
     }
 
     delete(req: Request, res: Response){
-       console.log(req.params)
          this.vegetablesService.delete(req.params.id).then((result)=>{
             res.status(200).send({
                 data: result

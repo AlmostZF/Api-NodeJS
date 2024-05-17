@@ -1,6 +1,6 @@
-import { error } from "console";
-import { Request, Response } from 'express';
-import SessionService from "../../shared/service/session/session-service";
+
+import  { Request, Response } from 'express';
+import SessionService from "../shared/service/session.service";
 
 export class SessionController{
     private sessionService = new SessionService();
@@ -27,7 +27,8 @@ export class SessionController{
                   }
             }).catch((error)=>{
                 res.status(500).json({
-                    data: "error 500"
+                    data: error,
+                    data2: "error 500"
                 });
             });
         }catch(error){
@@ -51,7 +52,7 @@ export class SessionController{
         });
     }
     createUser(req: Request, res: Response){
-        this.sessionService.createUser().then((result)=>{
+        this.sessionService.createUser(req.params, req.body).then((result)=>{
             res.status(200).json({
                 data: result
             });
@@ -74,7 +75,7 @@ export class SessionController{
     }
 
     delete(req: Request, res: Response){
-        this.sessionService.delete().then((result)=>{
+        this.sessionService.delete(req.params, req.body).then((result)=>{
             res.status(200).json({
                 data: result
             })
