@@ -2,19 +2,14 @@ import { Result } from "../../models/result";
 import { User } from "../../models/user-model";
 import { UserProvider } from "../../database/userProvider";
 import bcrypt from 'bcrypt';
+import { TokenService } from "./token.service";
+import { ReturnToken, Token } from "../../models/token";
 
-//   ugo@gmail.com
-// 1111111
-// ana@example.com
-// senha123
-// joao@example.com
-// acb123
-// maria@example.com
-// qwerty
 export default class SessionService{
 
     userProvider: UserProvider = new UserProvider()
     private tableName: string = 'usersLogin';
+    private token: TokenService = new TokenService();
 
     async get(){
         return  "get";
@@ -25,8 +20,9 @@ export default class SessionService{
             const user = await this.userProvider.login(body.email);
             if(user.length === 0) return this.creatResult(false, "login failed");
             const passwordHash = await this.compareHash(body.password, user[0].password)
+            const token: ReturnToken = this.token.generateToken(user[0].idUser);
             return passwordHash === true
-            ? this.creatResult(true, "login success") 
+            ? this.creatResult(true, "login success", token)
             : this.creatResult(false, "login failed");
         } catch (error) {
             console.error('Erro ao processar solicitação:', error);
@@ -49,6 +45,7 @@ export default class SessionService{
         return await bcrypt.hash(userPassword,10);   
     }
 
+    
     private creatResult(success: boolean, message: string, data?:any): Result{
         const result: Result = {
             success: success,
@@ -126,5 +123,17 @@ export default class SessionService{
         }
         
     }
+
+    async refreshToken(req:any , body:any): Promise<Result>{
+        const refreshToken = body.token;
+        if(!refreshToken) return this.creatResult(false, "Invalid refresh token");
+        try {
+            const decoded = this.token.refreshToken(1);
+            return this.creatResult(true, "Token refreshed",decoded);
+        } catch (error) {
+            return this.creatResult(false, "Invalid refresh token");
+        }
+    }
+
 };
 

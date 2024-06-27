@@ -57,6 +57,7 @@ export class UserProvider extends ConnectionDatabase{
         }
 
     };
+
     async updatePasswordUser(email:string,password:string, ): Promise<any> {
         const tableName = 'userAuthentication';
         this.connect();
@@ -93,11 +94,16 @@ export class UserProvider extends ConnectionDatabase{
         }
     }
 
+
+    /**
+     * login function catch the user password by email
+     * @param email 
+     * @returns User passoword like a hash
+     */
     async login(email: string): Promise<any> {
         const tableName = 'userAuthentication';
-        console.log(email)
         this.connect();
-        const query = `SELECT password FROM ${tableName} WHERE email = ?`;
+        const query = `SELECT password, idUser FROM ${tableName} WHERE email = ?`;
         try {
             const results = await new Promise((resolve, reject) => {
                 this.connection.query(query, [email], (error: any, results: any) => {
@@ -239,7 +245,6 @@ export class UserProvider extends ConnectionDatabase{
                     }
                 });
             });
-            // console.log(results)
             return results;
         } catch (error) {
             this.disconnect();
@@ -247,4 +252,5 @@ export class UserProvider extends ConnectionDatabase{
             throw error;
         }
     }
+    
 }

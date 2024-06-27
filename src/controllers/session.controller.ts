@@ -3,7 +3,7 @@ import  { Request, Response } from 'express';
 import SessionService from "../shared/service/session.service";
 
 export class SessionController{
-    private sessionService = new SessionService();
+    private sessionService: SessionService = new SessionService();
 
     get(req: Request, res: Response){
         this.sessionService.get().then((result)=>{
@@ -53,7 +53,9 @@ export class SessionController{
     }
     createUser(req: Request, res: Response){
         this.sessionService.createUser(req.params, req.body).then((result)=>{
-            res.status(200).json({
+            // console.log(req)
+            // console.log(res)
+            res.status(201).json({
                 data: result
             });
         }).catch((error)=>{
@@ -86,4 +88,15 @@ export class SessionController{
         })
     }
     
+    refreshToken(req: Request, res: Response){
+        this.sessionService.refreshToken(req.params, req.body).then((result)=>{
+            res.status(200).json({
+                data: result
+            });
+        }).catch((error)=>{
+            res.status(500).json({
+                data: "error 500"
+            });
+        });
+    }
 }

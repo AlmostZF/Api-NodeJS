@@ -3,7 +3,7 @@ import { databaseConfig } from '../../environment';
 import { User } from '../models/user-model';
 
 
-export class ConnectionDatabase{
+export abstract class ConnectionDatabase{
     protected connection: Connection;
     constructor(){
         this.connection = mysql.createConnection({

@@ -1,13 +1,12 @@
 import express, { Router } from 'express';
-import { VegetablesRoute } from './routes/vegetables-routes';
 import cors from 'cors';
 import { SessionRoute } from './routes/session-routes';
-import { ConnectionDatabase } from './database/conection-database';
+import { ProductsRoute } from './routes/products-routes';
 const router = Router();
 
 class Server {
     public server: express.Application;
-    private vegetables_route: VegetablesRoute = new VegetablesRoute();
+    private vegetables_route: ProductsRoute = new ProductsRoute();
     private sesssion_route: SessionRoute = new SessionRoute();
     
     public static bootstrap(): Server {

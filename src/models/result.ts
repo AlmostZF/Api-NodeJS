@@ -9,7 +9,7 @@
  * @property {any} data - Object for result of requisition
  */
 
-export class Result{
+export interface Result{
     success: boolean;
     message: string;
     data?: any;
