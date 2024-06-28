@@ -12,5 +12,5 @@
 export interface Result{
     success: boolean;
     message: string;
-    data?: any;
+    [key: string]: any;
 }

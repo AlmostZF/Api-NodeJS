@@ -1,11 +1,11 @@
 import { Product } from './../../models/products-model';
-import { ItemProvider } from "../../database/itensProvider";
+import { ProductProvider } from "../../database/productProvider";
 import { Result } from "../../models/result";
 
 const vegetables = require('../../database/vegetables.json');
 export default class ProductService{
 
-    private itens: ItemProvider = new ItemProvider();
+    private itens: ProductProvider = new ProductProvider();
 
     async delete(id:string){
         const vegetable = vegetables.find((e:Product) => e.Id === parseInt(id));
@@ -16,66 +16,79 @@ export default class ProductService{
     async put(body:Product): Promise<Result>{
         try {
             const product: Product = await this.itens.filterItens(body.Id, []);
-            return this.creatResult(true, "Product Edited", product);
+            return this.createResult(true, "Product Edited", product);
         } catch (error) {
             console.error("Erro ao processar", error);
-            return this.creatResult(false, "Internal server error");
+            return this.createResult(false, "Internal server error");
         }
     }
 
     async filter(req:any): Promise<Result>{
         try {
             let product!: Product;
+
+            const allowedParams = ['name', 'value', 'vote', 'type'];
+            const queryParams = Object.keys(req.query);
+
+            const hasInvalidParams = allowedParams.some((params)=> queryParams.includes(params));
+
+            if (!hasInvalidParams && queryParams.length != 0 ) {
+                return this.createResult(false, "Invalid query parameters");
+            }
+
             const formatedParams = [
                 {field: 'nameProduct', value: req.query.name},
-                {field: 'unitValue', value: req.query.value? Number(req.query.value) : req.query.value},
+                {field: 'unitValue', value: req.query.value},
                 {field: 'type', value: req.query.type},
-                {field: 'vote', value: req.query.vote? Number(req.query.vote) : req.query.vote},
+                {field: 'vote', value: req.query.vote},
             ]
 
-            const conditions = formatedParams.filter((filter)=> filter.value !== undefined && filter.value !== null);
+            const conditions = formatedParams.filter((filter) => filter.value !== undefined && filter.value !== null);
             const filteredParams = conditions.map((filter)=> filter.value)
-            console.log(filteredParams)
+
             if (conditions.length > 0) {
                 product = await this.itens.filterItens(conditions, filteredParams);
-                return this.creatResult(true, "Product Edited", product);
+                return this.createResult(true, "Product list filtered successfully", {products: product});
             }
 
             product = await this.itens.getAllItens();
-            return this.creatResult(true, "Product Edited", product);
+            return this.createResult(true, "Product list", {products: product});
+
         } catch (error) {
             console.error("Erro ao processar", error);
-            return this.creatResult(false, "Internal server error");
+            return this.createResult(false, "Internal server error");
         }
     }
 
     async getList(): Promise<Result>{
         try {
             const products = await this.itens.getAllItens();
-            return this.creatResult(true, "sucess GET itens", products );
+            return this.createResult(true, "sucess GET itens", products );
         } catch (error) {
             console.error("Erro ao processar", error);
-            return this.creatResult(false, "Internal server error");
+            return this.createResult(false, "Internal server error");
         }
     }
 
     async get(): Promise<Result>{
         try {
             const products = await this.itens.getAllItens();
-            return this.creatResult(true, "sucess GET itens", products );
+            return this.createResult(true, "sucess GET itens", products );
         } catch (error) {
             console.error("Erro ao processar", error);
-            return this.creatResult(false, "Internal server error");
+            return this.createResult(false, "Internal server error");
         }
     }
 
-    private creatResult(success: boolean, message: string, data?:any): Result{
+    private createResult<T>(success: boolean, message: string, data?:T): Result{
         const result: Result = {
             success: success,
             message: message,
 
         }
-        data? result.data = data : null;
+        if (data) {
+            Object.assign(result, data);
+        }
         return result;
     }
     

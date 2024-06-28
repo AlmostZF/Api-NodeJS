@@ -1,8 +1,6 @@
-import { Result } from './../models/result';
-import { resolve } from "path";
 import { ConnectionDatabase } from "./conection-database";
 
-export class ItemProvider extends ConnectionDatabase {
+export class ProductProvider extends ConnectionDatabase {
 
     constructor() {
         super();
@@ -26,7 +24,7 @@ export class ItemProvider extends ConnectionDatabase {
             console.error("Error executing query:",error)
             throw error;
         } finally {
-            this.disconnect();
+            // this.disconnect();
         }
     }
 
@@ -37,7 +35,6 @@ export class ItemProvider extends ConnectionDatabase {
             let query = `SELECT * FROM product WHERE 1=1`;
 
             params.forEach((element:any) => {
-
                 if(element.field === 'nameProduct'){
                     query += ` AND ${element.field} LIKE ?`
                     queryParams[0] = `%${queryParams[0]}%`
@@ -45,6 +42,7 @@ export class ItemProvider extends ConnectionDatabase {
                     query += ` AND ${element.field} = ?` 
                 }
             });
+            
             const result = await new Promise((resolve, reject) =>{
                 this.connection.query(query, queryParams, (error, results)=>{
                     if(error) {
@@ -59,7 +57,13 @@ export class ItemProvider extends ConnectionDatabase {
             console.error("Error executing query:",error)
             throw error;
         } finally {
-            this.disconnect();
+            // this.disconnect();
+        }
+    }
+
+    async destroy() {
+        if (this.connection) {
+            await this.disconnect();
         }
     }
 }
