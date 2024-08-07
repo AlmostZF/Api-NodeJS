@@ -1,6 +1,5 @@
 import mysql,{ Connection } from 'mysql';
 import { databaseConfig } from '../../environment';
-import { User } from '../models/user-model';
 
 
 export abstract class ConnectionDatabase{

@@ -10,7 +10,6 @@
  */
 
 export interface Result{
-    success: boolean;
     message: string;
-    [key: string]: any;
+    data: any;
 }

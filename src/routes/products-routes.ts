@@ -1,6 +1,7 @@
-import { ProductController } from '../controllers/products.controller';
+
 import { Application, Request, Response, } from "express";
 import cors from "cors";
+import { ProductController } from "../modules/products/products.controller";
 
 export class ProductsRoute{
 
@@ -14,10 +15,10 @@ export class ProductsRoute{
         });
         
         
-        app.options('/vegetables', cors);
-        app.delete('/vegetables/:id', cors(), async (req: Request, res: Response) =>{
-            this.productController.delete(req, res);
-        })
+        // app.options('/vegetables', cors);
+        // app.delete('/vegetables/:id', cors(), async (req: Request, res: Response) =>{
+        //     this.productController.delete(req, res);
+        // })
 
         app.options('/products', cors);
         app.get('/products/filtro', cors(), async (req: Request, res: Response) =>{
