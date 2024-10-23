@@ -4,16 +4,16 @@ import { User } from "../../Dtos/user-model";
 
 
 export class UserProvider extends ConnectionDatabase{
-    connection: any;
-
+    declare connection: any;
+    
     constructor(){
         super();
     }
 
-    async selectAllUsers(tableName: string): Promise<any> {
+    async selectAllUsers(): Promise<any> {
         try {
             const results = await new Promise((resolve, reject) => {
-                this.connection.query(`SELECT * FROM ${tableName}`, (error: any, results: any) => {
+                this.connection.query(`SELECT * FROM user`, (error: any, results: any) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -22,6 +22,7 @@ export class UserProvider extends ConnectionDatabase{
                 });
             });
             this.destroy();
+            console.log(results);
             return results;
         } catch (error) {
             console.error('Error executing query:', error);
@@ -60,7 +61,7 @@ export class UserProvider extends ConnectionDatabase{
 
     };
 
-    async updatePasswordUser(email:string,password:string, ): Promise<any> {
+    async updatePasswordUser(email:string, password:string): Promise<any> {
         const tableName = 'userAuthentication';
         this.connect();
         const updateQuery = `
@@ -96,35 +97,6 @@ export class UserProvider extends ConnectionDatabase{
         }
     }
 
-
-    /**
-     * login function catch the user password by email
-     * @param email 
-     * @returns User passoword like a hash
-     */
-    async login(email: string): Promise<any> {
-        const tableName = 'userAuthentication';
-        this.connect();
-        const query = `SELECT password, idUser FROM ${tableName} WHERE email = ?`;
-        try {
-            const results = await new Promise((resolve, reject) => {
-                this.connection.query(query, [email], (error: any, results: any) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(results);
-                    }
-                });
-            });
-            return results;
-        }catch(error){
-            console.error('Error executing query:', error);
-            throw error;
-        } finally {
-            await this.destroy();
-        }
-
-    }
     async selectUserByEmail(email: string): Promise<any> {
         this.connect();
         const query = `SELECT password FROM user WHERE email = ?`;
@@ -148,11 +120,11 @@ export class UserProvider extends ConnectionDatabase{
         }
     }
     
-    async verifyUserExist(email: string): Promise<any> {
+    async verifyUserExist(email: string): Promise<boolean> {
         const tableName = 'userAuthentication';
         this.connect();
         try {
-            const userExist = await new Promise((resolve, reject) => {
+            const userExist: boolean = await new Promise((resolve, reject) => {
                 const emailQuery = `
                     SELECT email 
                     FROM  ${tableName}
@@ -171,21 +143,7 @@ export class UserProvider extends ConnectionDatabase{
         } catch (error) {
             console.error('Error executing query:', error);
             throw error;
-        }finally {
-            await this.destroy();
-        }
-    }
-
-    async signUp(createUser: User): Promise<any> {
-        this.connect();
-        try {
-            const user = await this.createUser(createUser.email, createUser.name);   
-            const userLogin = await this.createUserAuthenticate(createUser.email, createUser.password, user.insertId);   
-            return userLogin;
-        } catch (error) {
-            console.error('Error executing query:', error);
-            throw error;
-        }finally {
+        } finally {
             await this.destroy();
         }
     }
@@ -210,6 +168,7 @@ export class UserProvider extends ConnectionDatabase{
             throw error;
         }
     }
+
     async createUserAuthenticate (email:string, password:string, idUser:number): Promise<any> {
         const tableName = 'userAuthentication';
         this.connect();

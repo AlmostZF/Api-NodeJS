@@ -15,14 +15,14 @@
  * @property {string} image - The URL of the image representing the vegetable item.
  * @property {number} vote - The number of votes or rating given to the vegetable item.
  */
-export interface Product {
-    Id: number;
-    quantity: number;
-    unitValue: number;
-    type: string;
-    description: string;
-    totalValue: number;
-    nameProduct: string;
-    image: string;
-    vote: number;
-}
+// export interface Product {
+//     Id: number;
+//     quantity: number;
+//     unitValue: number;
+//     type: string;
+//     description: string;
+//     totalValue: number;
+//     nameProduct: string;
+//     image: string;
+//     vote: number;
+// }

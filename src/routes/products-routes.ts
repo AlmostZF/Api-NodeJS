@@ -14,7 +14,6 @@ export class ProductsRoute{
             this.productController.get(req, res);
         });
         
-        
         // app.options('/vegetables', cors);
         // app.delete('/vegetables/:id', cors(), async (req: Request, res: Response) =>{
         //     this.productController.delete(req, res);

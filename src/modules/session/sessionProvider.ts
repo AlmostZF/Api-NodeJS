@@ -16,12 +16,6 @@ export class SessionProvider extends ConnectionDatabase{
         }
     }
 
-
-    /**
-     * login function catch the user password by email
-     * @param email 
-     * @returns User passoword like a hash
-     */
     async login(email: string): Promise<any> {
         const tableName = 'userAuthentication';
         this.connect();
@@ -46,11 +40,11 @@ export class SessionProvider extends ConnectionDatabase{
 
     }
     
-    async verifyUserExist(email: string): Promise<any> {
+    async verifyUserExist(email: string): Promise<boolean> {
         const tableName = 'userAuthentication';
         this.connect();
         try {
-            const userExist = await new Promise((resolve, reject) => {
+            const userExist: boolean = await new Promise((resolve, reject) => {
                 const emailQuery = `
                     SELECT email 
                     FROM  ${tableName}
@@ -116,7 +110,7 @@ export class SessionProvider extends ConnectionDatabase{
             const result = await new Promise((resolve, reject) => {
                 const query = `INSERT INTO  ${tableName} (email, password, idUser) VALUES (?, ?, ?)`;
                 this.connection.query(query, [email, password, idUser], (error:any, results:any) => {
-                    if (error) { 
+                    if (error) {
                         reject(error);
                     } else {
                         resolve(results);

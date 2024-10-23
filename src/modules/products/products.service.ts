@@ -1,7 +1,10 @@
 import { Result } from '../../Dtos/result';
+import { failureResponse } from '../common/common.service';
 import { ProductResponseDto } from './dto/productResponseDto';
 import { ProductProvider } from "./productProvider";
-
+import { CustomError } from "../common/common.model"
+import { Ipaginator } from '../../Dtos/paginator-model';
+import { Iparams } from '../../Dtos/parameters-interface';
 
 export default class ProductService{
 
@@ -15,7 +18,12 @@ export default class ProductService{
     
     async put(body:ProductResponseDto): Promise<Result>{
         try {
-            const product: ProductResponseDto[] = await this.itens.filterItens(body.idProduct, []);
+            const product: ProductResponseDto[] = await this.itens.filterItens([
+                {field: 'nameProduct', value: 'req.query.name'},
+                {field: 'unitValue', value: 'req.query.name'},
+                {field: 'type', value: 'req.query.name'},
+                {field: 'vote', value: 'req.query.name'},
+            ], [], { page: 1, limit: 7, offset: 0 });
             return this.createResult("Product Edited", product);
         } catch (error) {
             console.error("Erro ao processar", error);
@@ -27,54 +35,64 @@ export default class ProductService{
         try {
             let product!: ProductResponseDto[];
             
-            const paginatorParams = {
-                page: req.query.page ?? 1,
-                limit: req.query.limit ?? 6
-            }
-            const offsetParam = (paginatorParams.page - 1) * paginatorParams.limit;
-
-            const combinedParams = {
-                ...paginatorParams,
-                offset: offsetParam
-            };
-
-            const allowedParams = ['name', 'value', 'vote', 'type'];
+            const completePaginatorParams = await this.setParameters(req.query.page, req.query.limit);
+           
+            const allowedParams = ['name', 'value', 'vote', 'type','page', 'limit'];
             const queryParams = Object.keys(req.query);
-
 
             const hasInvalidParams = allowedParams.some((params) => queryParams.includes(params));
 
             if (!hasInvalidParams && queryParams.length != 0 ) {
-                return this.createResult("Invalid query parameters");
+                throw new CustomError("Revise os dados enviados");
             }
 
-            const formatedParams = [
+            const formatedParams: Iparams[] = [
                 {field: 'nameProduct', value: req.query.name},
                 {field: 'unitValue', value: req.query.value},
                 {field: 'type', value: req.query.type},
                 {field: 'vote', value: req.query.vote},
             ]
 
-            const conditions = formatedParams.filter((filter) => filter.value !== undefined && filter.value !== null);
-            const filteredParams = conditions.map((filter)=> filter.value)
+            const conditions = formatedParams.filter((filter) => {
+                return filter.value !== undefined && filter.value !== null && typeof filter.value === 'string' && filter.value.length <= 100;
+            });
 
-            if (conditions.length > 0) {
-                product = await this.itens.filterItens(conditions, filteredParams, combinedParams);
+            const filteredParams:string[] = conditions.map((filter) => filter.value)
+
+            if (filteredParams.length > 0 ) {
+                product = await this.itens.filterItens(conditions, filteredParams, completePaginatorParams);
                 return this.createResult("Product list filtered successfully", {products: product});
             }
-
-            product = await this.itens.getAllItens();
+            
+            product = await this.itens.getAllItens(completePaginatorParams);
             return this.createResult( "Product list", {products: product});
-
-        } catch (error) {
+            
+        } catch (error: any) {
+            if(error instanceof CustomError){
+                throw error
+            }
             console.error("Erro ao processar", error);
-            return this.createResult("Internal server error");
+            throw new Error("Problemas internos com o servidor");
         }
     }
 
-    async getList(): Promise<Result>{
+    async setParameters(page?: number, limit?: number): Promise<Ipaginator> {
+        const paginatorParams = {
+            page: page ?? 1,
+            limit: limit ?? 10
+        }
+        let offsetParam = (paginatorParams.page - 1) * paginatorParams.limit;
+        const completePaginatorParams = {
+            ...paginatorParams,
+            offset: offsetParam
+        };
+        return completePaginatorParams
+    }
+
+    async getList(parametersPaginator: Ipaginator): Promise<Result>{
         try {
-            const products = await this.itens.getAllItens();
+            const products = await this.itens.getAllItens(parametersPaginator);
+            
             return this.createResult( "sucess GET itens", products );
         } catch (error) {
             console.error("Erro ao processar", error);
@@ -82,13 +100,20 @@ export default class ProductService{
         }
     }
 
-    async get(): Promise<Result>{
+    async get(req: any): Promise<Result>{
         try {
-            const products = await this.itens.getAllItens();
-            return this.createResult("sucess GET itens", products );
-        } catch (error) {
-            console.error("Erro ao processar", error);
-            return this.createResult("Internal server error");
+            let parametersPaginator: Ipaginator = await this.setParameters(req.query.page, req.query.limit);
+            if(isNaN(parametersPaginator.offset)){
+                throw new CustomError('Parâmetros inválidos')
+            }
+            const products = await this.itens.getAllItens(parametersPaginator);
+
+            return this.createResult("Sucesso ao buscar itens ", products );
+        } catch (error:any) {
+            if(error instanceof CustomError){
+                throw error
+            }
+            throw new Error("Tente novamente mais tarde");
         }
     }
 

@@ -120,11 +120,11 @@ export class UserProvider extends ConnectionDatabase{
         }
     }
     
-    async verifyUserExist(email: string): Promise<any> {
+    async verifyUserExist(email: string): Promise<boolean> {
         const tableName = 'userAuthentication';
         this.connect();
         try {
-            const userExist = await new Promise((resolve, reject) => {
+            const userExist: boolean = await new Promise((resolve, reject) => {
                 const emailQuery = `
                     SELECT email 
                     FROM  ${tableName}

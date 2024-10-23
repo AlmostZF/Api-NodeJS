@@ -28,7 +28,7 @@ export default class UserService{
 
     async editUser(req:any, body:User): Promise<Result>{
         try{
-            const user = await this.UserProvider.selectAllUsers(this.tableName);
+            const user = await this.UserProvider.selectAllUsers();
             
             user.find((e:User)=> e.idUser === body.idUser)
             // this.passwordHash = await bcrypt.hash(body.password, 10);
@@ -52,7 +52,7 @@ export default class UserService{
 
     async delete(req:any , body:User): Promise<Result>{
         try{   
-            const user = await this.UserProvider.selectAllUsers(this.tableName);
+            const user = await this.UserProvider.selectAllUsers();
             const userFind = user.find((e:User)=> e.email === body.email)
             if(user){
                 this.UserProvider.deleteUser(userFind.idUser, this.tableName);

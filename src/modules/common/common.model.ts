@@ -4,3 +4,8 @@ export enum response_status_codes {
     unauthorize = 401,
     internal_server_error = 500
 }   
+export class CustomError extends Error {
+    constructor(message: string) {
+        super(message);
+      }
+  }

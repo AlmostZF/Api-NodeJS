@@ -1,7 +1,7 @@
 
 import  { Request, Response } from 'express';
-import SessionService from './session.service';
 import { failureResponse, successResponse } from '../common/common.service';
+import SessionService from './session.service';
 
 export class SessionController{
     private sessionService: SessionService = new SessionService();

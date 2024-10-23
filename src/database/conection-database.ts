@@ -1,4 +1,4 @@
-import mysql,{ Connection } from 'mysql';
+import mysql, { Connection } from 'mysql';
 import { databaseConfig } from '../../environment';
 
 

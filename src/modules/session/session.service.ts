@@ -1,8 +1,8 @@
+import { Result } from './../../Dtos/result';
 import { Login, SignIn  } from './../session/Dtos/sessionDTO';
 import { TokenUtils } from "../../shared/utils/tokenUtils";
 import { AuthLogin } from "../../shared/utils/authUtils";
 import { TokenDTO } from "../tokenDTO";
-import { Result } from "../../Dtos/result";
 import { SessionProvider } from "../session/sessionProvider";
 
 
@@ -58,7 +58,7 @@ export default class SessionService{
 
             body.password = await AuthLogin.createHash(body.password);
             await this.SessionProvider.signUp(body);
-            return this.creatResult( "user created");
+            return this.creatResult("user created");
         }catch(error: any){
             return this.creatResult( error.message);
         }
