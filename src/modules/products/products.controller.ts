@@ -42,4 +42,12 @@ export class ProductController {
             : failureResponse('Erro ao buscar produtos: ' + error.message, res, {})
         });
     }
+
+    getItemById(req: Request, res: Response){
+        this.productService.getProductById(req).then((result)=>{
+            successResponse(result.message, res, result.data);
+        }).catch(function (error) {
+            failureResponse('Erro ao buscar produto: ' + error.message, res, {});
+        });
+    }
 }

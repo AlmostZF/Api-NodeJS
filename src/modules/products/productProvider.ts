@@ -1,8 +1,10 @@
+
 import { ConnectionDatabase } from "../../database/conection-database";
 import { Ipaginator } from "../../Dtos/paginator-model";
 import { Iparams } from "../../Dtos/parameters-interface";
 
 import { ProductResponseDto } from "./dto/productResponseDto";
+import { CustomError } from "../common/common.model";
 
 export class ProductProvider extends ConnectionDatabase {
 
@@ -10,7 +12,45 @@ export class ProductProvider extends ConnectionDatabase {
         super();
     }
 
-    async getAllItens(paginatorParams:Ipaginator): Promise<ProductResponseDto[]>{
+    private async mapProductResponsesToDtos(ProductResponse: ProductResponseDto[]): Promise<ProductResponseDto[]>{
+        ProductResponse.forEach(product => {
+            new ProductResponseDto(
+                product.idProduct, product.quantity, product.unitValue,
+                product.nameProduct, product.description,product.totalValue,
+                product.image);
+        });
+        return ProductResponse
+    }
+
+    public async getItemById(id:number): Promise<ProductResponseDto>{
+        this.connect();
+        try {
+            const product: ProductResponseDto[] = await new Promise((resolve, reject) =>{
+                let query = `SELECT * FROM product WHERE idProduct = ?`
+                this.connection.query(query, [id], (error:any, productResponse: ProductResponseDto[] )=>{
+                    if(error) {
+                        reject(error) 
+                    }else{
+                        resolve(productResponse)
+                    }
+                });
+            });
+
+            const productReturn = await this.mapProductResponsesToDtos(product)
+                
+            return productReturn[0]
+
+        } catch (error) {
+            if(error instanceof CustomError){
+                throw error
+            }
+            throw error;
+        } finally {
+            // this.disconnect();
+        }
+    }
+
+    public async getAllItens(paginatorParams:Ipaginator): Promise<ProductResponseDto[]>{
         this.connect();
         try {
             const products: ProductResponseDto[] = await new Promise((resolve, reject) =>{
@@ -25,16 +65,10 @@ export class ProductProvider extends ConnectionDatabase {
                 });
             });
             
-            let productsResponse: ProductResponseDto[] = [];
-            products.forEach(product => {
-                let productResponse = new ProductResponseDto(
-                    product.idProduct, product.quantity, product.unitValue,
-                    product.nameProduct, product.description,product.totalValue,
-                    product.image);
-                productsResponse.push(productResponse);
-            });
+            const prodcutReturn = await this.mapProductResponsesToDtos(products)
 
-            return productsResponse;
+            return prodcutReturn;
+
         } catch (error) {
             console.error("Error executing query:",error)
             throw error;
@@ -44,7 +78,7 @@ export class ProductProvider extends ConnectionDatabase {
     }
 
 
-    async filterItens(params: Iparams[], queryParams: string[], paginatorParams: Ipaginator): Promise<ProductResponseDto[]>{
+    public async filterItens(params: Iparams[], queryParams: string[], paginatorParams: Ipaginator): Promise<ProductResponseDto[]>{
         this.connect();
         try {
             let query = `SELECT * FROM product WHERE 1=1`;

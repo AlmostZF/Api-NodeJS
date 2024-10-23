@@ -25,6 +25,11 @@ export class ProductsRoute{
         })
 
         app.options('/products', cors);
+        app.get('/products/:id', cors(), async (req: Request, res: Response) =>{
+            this.productController.getItemById(req, res);
+        })
+
+        app.options('/products', cors);
         app.put('/products',cors(), async (req: Request, res: Response)=>{
             this.productController.put(req, res)
         })

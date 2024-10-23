@@ -16,7 +16,7 @@ export default class ProductService{
     //     return vegetables;
     // }
     
-    async put(body:ProductResponseDto): Promise<Result>{
+    public async put(body:ProductResponseDto): Promise<Result>{
         try {
             const product: ProductResponseDto[] = await this.itens.filterItens([
                 {field: 'nameProduct', value: 'req.query.name'},
@@ -31,7 +31,7 @@ export default class ProductService{
         }
     }
 
-    async filter(req:any): Promise<Result>{
+    public async filter(req:any): Promise<Result>{
         try {
             let product!: ProductResponseDto[];
             
@@ -76,7 +76,7 @@ export default class ProductService{
         }
     }
 
-    async setParameters(page?: number, limit?: number): Promise<Ipaginator> {
+    public async setParameters(page?: number, limit?: number): Promise<Ipaginator> {
         const paginatorParams = {
             page: page ?? 1,
             limit: limit ?? 10
@@ -89,7 +89,7 @@ export default class ProductService{
         return completePaginatorParams
     }
 
-    async getList(parametersPaginator: Ipaginator): Promise<Result>{
+    public async getList(parametersPaginator: Ipaginator): Promise<Result>{
         try {
             const products = await this.itens.getAllItens(parametersPaginator);
             
@@ -100,21 +100,40 @@ export default class ProductService{
         }
     }
 
-    async get(req: any): Promise<Result>{
+    public async get(req: any): Promise<Result>{
         try {
             let parametersPaginator: Ipaginator = await this.setParameters(req.query.page, req.query.limit);
             if(isNaN(parametersPaginator.offset)){
-                throw new CustomError('Parâmetros inválidos')
+                throw new CustomError('Parâmetros inválidos');
             }
             const products = await this.itens.getAllItens(parametersPaginator);
 
             return this.createResult("Sucesso ao buscar itens ", products );
         } catch (error:any) {
             if(error instanceof CustomError){
-                throw error
+                throw error;
             }
             throw new Error("Tente novamente mais tarde");
         }
+    }
+
+    public async getProductById(req: any): Promise<Result>{
+            try {
+                const id = Number(req.params.id);
+                if(isNaN(id)){
+                    throw new CustomError('Parâmetro inválido');
+                }
+                const product = await this.itens.getItemById(id);
+
+                return this.createResult("Sucesso ao buscar itens", product );
+
+            } catch (error) {
+                if(error instanceof CustomError){
+                    throw error;
+                }
+                throw new Error("Tente novamente mais tarde");
+            }
+
     }
 
     private createResult<T>(message: string, data?:T): Result{
