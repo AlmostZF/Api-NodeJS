@@ -1,9 +1,10 @@
-import { Result } from './../../Dtos/result';
-import { Login, SignIn  } from './../session/Dtos/sessionDTO';
+import { Login, SignIn } from './Dtos/sessionDTO';
+
 import { TokenUtils } from "../../shared/utils/tokenUtils";
 import { AuthLogin } from "../../shared/utils/authUtils";
 import { TokenDTO } from "../tokenDTO";
 import { SessionProvider } from "../session/sessionProvider";
+import { Result } from '../../interface/result';
 
 
 export default class SessionService{
@@ -24,7 +25,7 @@ export default class SessionService{
 
             const passwordHash = await AuthLogin.compareHash(body.password, user[0].password);
             if (!passwordHash) {
-                return this.creatResult( "login failed");
+                return this.creatResult("login failed");
             }
 
             const token: TokenDTO = TokenUtils.createToken(user[0].idUser);

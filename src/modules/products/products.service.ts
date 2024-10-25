@@ -1,10 +1,11 @@
-import { Result } from '../../Dtos/result';
-import { failureResponse } from '../common/common.service';
+import { Ipaginator } from './../../interface/paginator-model';
+import { Iparams } from './../../interface/parameters-interface';
+import { Result } from './../../interface/result';
+
 import { ProductResponseDto } from './dto/productResponseDto';
-import { ProductProvider } from "./productProvider";
+import { ProductProvider } from "./product-provider";
 import { CustomError } from "../common/common.model"
-import { Ipaginator } from '../../Dtos/paginator-model';
-import { Iparams } from '../../Dtos/parameters-interface';
+
 
 export default class ProductService{
 
@@ -24,10 +25,11 @@ export default class ProductService{
                 {field: 'type', value: 'req.query.name'},
                 {field: 'vote', value: 'req.query.name'},
             ], [], { page: 1, limit: 7, offset: 0 });
-            return this.createResult("Product Edited", product);
+            const result = Result.createResult("Product Edited", product)
+            return result
         } catch (error) {
             console.error("Erro ao processar", error);
-            return this.createResult( "Internal server error");
+            return Result.createResult("Internal server error")
         }
     }
 
@@ -61,11 +63,11 @@ export default class ProductService{
 
             if (filteredParams.length > 0 ) {
                 product = await this.itens.filterItens(conditions, filteredParams, completePaginatorParams);
-                return this.createResult("Product list filtered successfully", {products: product});
+                return Result.createResult("Product list filtered successfully", {products: product});
             }
             
             product = await this.itens.getAllItens(completePaginatorParams);
-            return this.createResult( "Product list", {products: product});
+            return Result.createResult( "Product list", {products: product});
             
         } catch (error: any) {
             if(error instanceof CustomError){
@@ -93,10 +95,10 @@ export default class ProductService{
         try {
             const products = await this.itens.getAllItens(parametersPaginator);
             
-            return this.createResult( "sucess GET itens", products );
+            return Result.createResult( "sucess GET itens", products );
         } catch (error) {
             console.error("Erro ao processar", error);
-            return this.createResult("Internal server error");
+            return Result.createResult("Internal server error");
         }
     }
 
@@ -108,7 +110,7 @@ export default class ProductService{
             }
             const products = await this.itens.getAllItens(parametersPaginator);
 
-            return this.createResult("Sucesso ao buscar itens ", products );
+            return Result.createResult("Sucesso ao buscar itens ", products );
         } catch (error:any) {
             if(error instanceof CustomError){
                 throw error;
@@ -125,7 +127,7 @@ export default class ProductService{
                 }
                 const product = await this.itens.getItemById(id);
 
-                return this.createResult("Sucesso ao buscar itens", product );
+                return Result.createResult("Sucesso ao buscar itens", product );
 
             } catch (error) {
                 if(error instanceof CustomError){
@@ -136,12 +138,4 @@ export default class ProductService{
 
     }
 
-    private createResult<T>(message: string, data?:T): Result{
-        const result: Result = {
-            message: message,
-            data
-        }
-        return result;
-    }
-    
 }

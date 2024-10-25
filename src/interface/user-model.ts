@@ -10,7 +10,7 @@
  * 
  */
 
-export interface User{
+export interface IUser{
     idUser?: number;
     email: string;
     name: string;

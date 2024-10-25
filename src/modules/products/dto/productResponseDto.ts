@@ -1,20 +1,20 @@
 export class ProductResponseDto{
     idProduct: number;
-    quantity: number;
+    quantity: number = 1;
     unitValue: number;
     nameProduct: string;
     description: string;
-    totalValue: number;
     image: string;
     vote!: string;
+    total: number;
 
-    constructor(idProduct: number, quantity: number, unitValue: number, nameProduct: string, description: string, totalValue: number, image: string){
+    constructor(idProduct: number, unitValue: number, nameProduct: string, description: string, image: string, total:number){
         this.idProduct = idProduct;
-        this.quantity = quantity;
         this.unitValue = unitValue;
         this.nameProduct = nameProduct;
         this.description = description;
-        this.totalValue = totalValue;
         this.image = image;   
+        this.total = total;
     }
+    
 }

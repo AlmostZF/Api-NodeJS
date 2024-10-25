@@ -1,7 +1,7 @@
 
 import { TokenUtils } from "../../shared/utils/tokenUtils";
-import { Result } from "../../Dtos/result";
-import { User } from "../../Dtos/user-model";
+import { Result } from "../../interface/result";
+import { IUser } from "../../interface/user-model";
 import { UserProvider } from "./userProvider";
 
 
@@ -26,11 +26,11 @@ export default class UserService{
         return  "put";
     }
 
-    async editUser(req:any, body:User): Promise<Result>{
+    async editUser(req:any, body:IUser): Promise<Result>{
         try{
             const user = await this.UserProvider.selectAllUsers();
             
-            user.find((e:User)=> e.idUser === body.idUser)
+            user.find((e:IUser)=> e.idUser === body.idUser)
             // this.passwordHash = await bcrypt.hash(body.password, 10);
             if(!user){
                 return {
@@ -50,10 +50,10 @@ export default class UserService{
             }};
     }
 
-    async delete(req:any , body:User): Promise<Result>{
+    async delete(req:any , body:IUser): Promise<Result>{
         try{   
             const user = await this.UserProvider.selectAllUsers();
-            const userFind = user.find((e:User)=> e.email === body.email)
+            const userFind = user.find((e:IUser)=> e.email === body.email)
             if(user){
                 this.UserProvider.deleteUser(userFind.idUser, this.tableName);
                 // this.UserProvider.splice(this.UserProvider.indexOf(user), 1);

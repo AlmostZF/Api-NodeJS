@@ -1,10 +1,10 @@
 import { ConnectionDatabase } from "../../database/conection-database";
-import { User } from "../../Dtos/user-model";
+import { User } from "../../interface/user-model";
 
 
 
 export class UserProvider extends ConnectionDatabase{
-    connection: any;
+    declare connection: any;
 
     constructor(){
         super();
@@ -16,6 +16,7 @@ export class UserProvider extends ConnectionDatabase{
                 this.connection.query(`SELECT * FROM ${tableName}`, (error: any, results: any) => {
                     if (error) {
                         reject(error);
+                        throw error
                     } else {
                         resolve(results);
                     }
@@ -105,6 +106,7 @@ export class UserProvider extends ConnectionDatabase{
                 this.connection.query(query, [email], (error: any, results: any) => {
                     if (error) {
                         reject(error);
+                        throw error
                     } else {
                         resolve(results);
                         return results;
@@ -132,6 +134,7 @@ export class UserProvider extends ConnectionDatabase{
                 this.connection.query(emailQuery, [email], (error: any, results: any) => {
                     if (error) {
                         reject(error);
+                        throw error
                     } else {
                         resolve(results.length > 0);
                     }
@@ -157,6 +160,7 @@ export class UserProvider extends ConnectionDatabase{
                     if (error) {
                         this.disconnect();
                         reject(error);
+                        throw error
                     } else {
                         this.disconnect();
                         resolve(results);

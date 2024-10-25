@@ -1,5 +1,5 @@
 import { ConnectionDatabase } from "../../database/conection-database";
-import { User } from "../../Dtos/user-model";
+
 
 
 
@@ -12,18 +12,17 @@ export class UserProvider extends ConnectionDatabase{
 
     async selectAllUsers(): Promise<any> {
         try {
-            const results = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 this.connection.query(`SELECT * FROM user`, (error: any, results: any) => {
                     if (error) {
+                        
                         reject(error);
+                        throw error
                     } else {
                         resolve(results);
                     }
                 });
             });
-            this.destroy();
-            console.log(results);
-            return results;
         } catch (error) {
             console.error('Error executing query:', error);
             throw error;
@@ -44,7 +43,7 @@ export class UserProvider extends ConnectionDatabase{
             WHERE email = ?
             AND @idUser ` ;
         try {
-            const results = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 this.connection.query(updateQuery, [email, newEmail, email], (error: any, results: any) => {
                     if (error) {
                         throw error;
@@ -53,7 +52,6 @@ export class UserProvider extends ConnectionDatabase{
                     }
                 });
             });
-            return results;
         } catch (error) {
             console.error('Error executing query:', error);
             throw error;
@@ -75,7 +73,7 @@ export class UserProvider extends ConnectionDatabase{
             WHERE email = ?
             AND @idUser ` ;
         try {
-            const result = await new Promise((resolve, reject)=>{
+           return await new Promise((resolve, reject)=>{
                 this.connection.query(updateQuery, [email,password,email],(error:any, result:any)=>{
                     if(error){
                         throw error;
@@ -84,7 +82,6 @@ export class UserProvider extends ConnectionDatabase{
                     }
                 });
             });
-            return result;
         } catch (error) {
             console.error('Error executing query:', error);
             throw error;
@@ -101,17 +98,16 @@ export class UserProvider extends ConnectionDatabase{
         this.connect();
         const query = `SELECT password FROM user WHERE email = ?`;
         try {
-            const results = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 this.connection.query(query, [email], (error: any, results: any) => {
                     if (error) {
                         reject(error);
+                        throw error
                     } else {
                         resolve(results);
-                        return results;
                     }
                 });
             });
-            return results;
         }catch(error){
             console.error('Error executing query:', error);
             throw error;
@@ -124,7 +120,7 @@ export class UserProvider extends ConnectionDatabase{
         const tableName = 'userAuthentication';
         this.connect();
         try {
-            const userExist: boolean = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 const emailQuery = `
                     SELECT email 
                     FROM  ${tableName}
@@ -132,13 +128,12 @@ export class UserProvider extends ConnectionDatabase{
                 this.connection.query(emailQuery, [email], (error: any, results: any) => {
                     if (error) {
                         reject(error);
+                        throw error
                     } else {
                         resolve(results.length > 0);
                     }
                 });
             });
-    
-            return userExist;
 
         } catch (error) {
             console.error('Error executing query:', error);
@@ -152,17 +147,17 @@ export class UserProvider extends ConnectionDatabase{
         const tableName = 'user';
         this.connect();
         try {
-            const results = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 const query = `INSERT INTO  ${tableName} (email, name) VALUES (?, ?)`;
-                this.connection.query(query, [email,name], (error, results) => {
+                this.connection.query(query, [email,name], (error:any, results:any) => {
                     if (error) {
                         reject(error);
+                        throw error
                     } else {
                         resolve(results);
                     }
                 });
             });
-            return results;
         } catch (error) {
             console.error('Error executing query:', error);
             throw error;
@@ -173,17 +168,17 @@ export class UserProvider extends ConnectionDatabase{
         const tableName = 'userAuthentication';
         this.connect();
         try {
-            const result = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 const query = `INSERT INTO  ${tableName} (email, password, idUser) VALUES (?, ?, ?)`;
-                this.connection.query(query, [email, password, idUser], (error, results) => {
+                this.connection.query(query, [email, password, idUser], (error:any, results:any) => {
                     if (error) { 
                         reject(error);
+                        throw error
                     } else {
                         resolve(results);
                     }
                 });
             });
-            return result;
         } catch (error) {
             console.error('Error executing query:', error);
             throw error;
@@ -193,20 +188,19 @@ export class UserProvider extends ConnectionDatabase{
 
     async deleteUser(idUser: number, tableName: string):Promise<any>{
         try {
-
-            const results = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 const query = `DELETE FROM ${tableName} WHERE idUser = ?`;
-                this.connection.query(query, [idUser], (error, results) => {
+                this.connection.query(query, [idUser], (error:any, results:any) => {
                     if (error) {
                         this.disconnect();
                         reject(error);
+                        throw error
                     } else {
                         this.disconnect();
                         resolve(results);
                     }
                 });
             });
-            return results;
         } catch (error) {
             this.disconnect();
             console.error('Error executing query:', error);

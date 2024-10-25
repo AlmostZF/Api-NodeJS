@@ -1,13 +1,18 @@
 import express, { Router } from 'express';
 import cors from 'cors';
 import { SessionRoute } from './routes/session-routes';
+import { CartRoute } from './routes/cart-routes';
 import { ProductsRoute } from './routes/products-routes';
+import { UserRoutes } from './routes/user-routes';
+
 const router = Router();
 
 class Server {
     public server: express.Application;
-    private vegetables_route: ProductsRoute = new ProductsRoute();
     private sesssion_route: SessionRoute = new SessionRoute();
+    private cart_route: CartRoute = new CartRoute();
+    private product_route: ProductsRoute = new ProductsRoute();
+    private user_route: UserRoutes = new UserRoutes();
     
     public static bootstrap(): Server {
         return new Server();
@@ -16,8 +21,11 @@ class Server {
     constructor() {
         this.server = express();
         this.config();
-        this.vegetables_route.routes(this.server);
         this.sesssion_route.routes(this.server);
+        this.cart_route.routes(this.server)
+        this.product_route.routes(this.server)
+        this.user_route.routes(this.server)
+        
     }
     
     public config(): void{
@@ -28,4 +36,4 @@ class Server {
 }   
 
 export default new Server().server; 
-export { router};
+export { router };

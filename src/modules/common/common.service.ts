@@ -29,3 +29,10 @@ export function unauthorize(message:string, res:Response, data: any){
         data: {}
     })
 }
+export function created(message:string, res:Response, data: any){
+    res.status(response_status_codes.created).json({
+        status: 'CREATED',
+        message: message,
+        data: {}
+    })
+}

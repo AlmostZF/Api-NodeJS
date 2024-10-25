@@ -1,7 +1,8 @@
+import { Iparams } from './../../interface/parameters-interface';
+import { Ipaginator } from './../../interface/paginator-model';
 
 import { ConnectionDatabase } from "../../database/conection-database";
-import { Ipaginator } from "../../Dtos/paginator-model";
-import { Iparams } from "../../Dtos/parameters-interface";
+
 
 import { ProductResponseDto } from "./dto/productResponseDto";
 import { CustomError } from "../common/common.model";
@@ -12,12 +13,12 @@ export class ProductProvider extends ConnectionDatabase {
         super();
     }
 
-    private async mapProductResponsesToDtos(ProductResponse: ProductResponseDto[]): Promise<ProductResponseDto[]>{
+    public mapProductResponsesToDtos(ProductResponse: ProductResponseDto[]): ProductResponseDto[]{
         ProductResponse.forEach(product => {
             new ProductResponseDto(
-                product.idProduct, product.quantity, product.unitValue,
-                product.nameProduct, product.description,product.totalValue,
-                product.image);
+                product.idProduct, product.unitValue,
+                product.nameProduct, product.description,
+                product.image, product.total);
         });
         return ProductResponse
     }
@@ -25,20 +26,28 @@ export class ProductProvider extends ConnectionDatabase {
     public async getItemById(id:number): Promise<ProductResponseDto>{
         this.connect();
         try {
-            const product: ProductResponseDto[] = await new Promise((resolve, reject) =>{
-                let query = `SELECT * FROM product WHERE idProduct = ?`
+            return await new Promise((resolve, reject) =>{
+                let query = `
+                    SELECT * 
+                    FROM product 
+                    WHERE idProduct = ?`
+
                 this.connection.query(query, [id], (error:any, productResponse: ProductResponseDto[] )=>{
                     if(error) {
-                        reject(error) 
+                        reject(error);
+                        throw error; 
+                    }
+                    if(productResponse.length == 0){
+                        
+                        reject(new CustomError('item nao encontrado'));
+
                     }else{
-                        resolve(productResponse)
+
+                        resolve(this.mapProductResponsesToDtos(productResponse)[0])
+
                     }
                 });
             });
-
-            const productReturn = await this.mapProductResponsesToDtos(product)
-                
-            return productReturn[0]
 
         } catch (error) {
             if(error instanceof CustomError){
@@ -53,21 +62,22 @@ export class ProductProvider extends ConnectionDatabase {
     public async getAllItens(paginatorParams:Ipaginator): Promise<ProductResponseDto[]>{
         this.connect();
         try {
-            const products: ProductResponseDto[] = await new Promise((resolve, reject) =>{
-                let query = `SELECT * FROM product`;
+            return await new Promise((resolve, reject) =>{
+                let query = `
+                    SELECT * 
+                    FROM product`
+                ;
                 query += ` LIMIT ${paginatorParams.limit} OFFSET ${paginatorParams.offset}`;
                 this.connection.query(query, (error:any, productsResponse:ProductResponseDto[])=>{
                     if(error) {
-                        reject(error) 
+                        reject(error);
+                        throw error; 
                     }else{
-                        resolve(productsResponse)
+                        resolve(this.mapProductResponsesToDtos(productsResponse))
                     }
                 });
             });
-            
-            const prodcutReturn = await this.mapProductResponsesToDtos(products)
 
-            return prodcutReturn;
 
         } catch (error) {
             console.error("Error executing query:",error)
@@ -87,25 +97,17 @@ export class ProductProvider extends ConnectionDatabase {
                 queryParams.push(filter.value);
               });
               query += ` LIMIT ${paginatorParams.limit} OFFSET ${paginatorParams.offset}`;
-            const products: ProductResponseDto[] = await new Promise((resolve, reject) =>{
+            return await new Promise((resolve, reject) =>{
                 this.connection.query(query, queryParams, (error, productsResponse:ProductResponseDto[])=>{
                     if(error) { 
-                        reject(error) 
+                        reject(error);
+                        throw error; 
                     }else{
-                        resolve(productsResponse)
+                        resolve(this.mapProductResponsesToDtos(productsResponse))
                     }
                 });
             });
 
-            let productsResponse: ProductResponseDto[] = [];
-            products.forEach(product => {
-                let productResponse = new ProductResponseDto(
-                    product.idProduct, product.quantity, product.unitValue,
-                    product.nameProduct, product.description,product.totalValue,
-                    product.image);
-                productsResponse.push(productResponse);
-            });
-            return productsResponse
         } catch (error) {
             console.error("Error executing query:",error)
             throw error;
