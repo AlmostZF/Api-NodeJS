@@ -14,11 +14,6 @@ export class ProductsRoute{
             this.productController.get(req, res);
         });
         
-        // app.options('/vegetables', cors);
-        // app.delete('/vegetables/:id', cors(), async (req: Request, res: Response) =>{
-        //     this.productController.delete(req, res);
-        // })
-
         app.options('/products', cors);
         app.get('/products/filtro', cors(), async (req: Request, res: Response) =>{
             this.productController.filter(req, res);
@@ -27,11 +22,6 @@ export class ProductsRoute{
         app.options('/products', cors);
         app.get('/products/:id', cors(), async (req: Request, res: Response) =>{
             this.productController.getItemById(req, res);
-        })
-
-        app.options('/products', cors);
-        app.put('/products',cors(), async (req: Request, res: Response)=>{
-            this.productController.put(req, res)
         })
     }
 }
