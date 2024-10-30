@@ -23,14 +23,14 @@ export class AuthMiddleware {
                         
                         if(err){
                             if(err as TokenExpiredError){
-                                return res.status(401).send({auth: false, message: "invalid Refresh token"})
+                                return res.status(401).send({auth: false, message: "invalid Refresh token"});
                             }
-                            return res.status(401).send({auth: false, message: "invalid Refresh token"})
+                            return res.status(401).send({auth: false, message: "invalid Refresh token"});
                         }else{
                             const newAccessToken = Jwt.sign({idUser: id}, secretKey, {expiresIn: 20});
                             // const newRefreshToken = Jwt.sign({id: decoded.id}, secretKeyRefresh, {expiresIn: '7d'});
                             res.setHeader("x-access-token", newAccessToken);
-                            console.log("gerou outro TOKEN 1x")
+                            console.log("gerou outro TOKEN 1x");
                             // res.setHeader("x-refresh-token", newRefreshToken);
                            
                         }
